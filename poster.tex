@@ -1,0 +1,389 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Jacobs Landscape Poster
+% LaTeX Template
+% Version 1.0 (29/03/13)
+%
+% Created by:
+% Computational Physics and Biophysics Group, Jacobs University
+% https://teamwork.jacobs-university.de:8443/confluence/display/CoPandBiG/LaTeX+Poster
+% 
+% Further modified by:
+% Nathaniel Johnston (nathaniel@njohnston.ca)
+%
+% Modified further still by:
+% Abraham Nunes (nunes <at> dal <dot> ca)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[final]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+
+\usepackage[size=custom,width=91.44,height=60.96,scale=0.7,orientation=portrait]{beamerposter} % Use the beamerposter package for laying out the poster
+
+\usetheme{confposter} % Use the confposter theme supplied with this template
+
+\setbeamercolor{block title}{fg=black,bg=white} % Colors of the block titles
+\setbeamercolor{block body}{fg=black,bg=white} % Colors of the body of blocks
+\setbeamercolor{block alerted title}{fg=white,bg=black} % Colors of the highlighted block titles
+\setbeamercolor{block alerted body}{fg=black,bg=white} % Colors of the body of highlighted blocks
+% Many more colors are available for use in beamerthemeconfposter.sty
+
+%-----------------------------------------------------------
+% Define the column widths and overall poster size
+% To set effective sepwid, onecolwid and twocolwid values, first choose how many columns you want and how much separation you want between columns
+% In this template, the separation width chosen is 0.024 of the paper width and a 4-column layout
+% onecolwid should therefore be (1-(# of columns+1)*sepwid)/# of columns e.g. (1-(4+1)*0.024)/4 = 0.22
+% Set twocolwid to be (2*onecolwid)+sepwid = 0.464
+% Set threecolwid to be (3*onecolwid)+2*sepwid = 0.708
+
+\newlength{\sepwid}
+\newlength{\onecolwid}
+\newlength{\twocolwid}
+\newlength{\threecolwid}
+\setlength{\paperwidth}{91.44cm} % A0 width: 46.8in
+\setlength{\paperheight}{60.96cm} % A0 height: 33.1in
+\setlength{\sepwid}{0.024\paperwidth} % Separation width (white space) between columns
+\setlength{\onecolwid}{0.22\paperwidth} % Width of one column
+\setlength{\twocolwid}{0.464\paperwidth} % Width of two columns
+\setlength{\threecolwid}{0.708\paperwidth} % Width of three columns
+\setlength{\topmargin}{-0.5in} % Reduce the top margin size
+%-----------------------------------------------------------
+
+\usepackage{graphicx}  % Required for including images
+
+\usepackage{booktabs} % Top and bottom rules for tables
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION 
+%----------------------------------------------------------------------------------------
+
+\title{Modified Diffusion Quantum Monte Carlo for Approximating Helium Ground State Energy} % Poster title
+
+\author{Reilly Cannon $^{1}$} % Author(s)
+
+\institute{$^{1}$ Reed College, Portland, Oregon} % Institution(s)
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\addtobeamertemplate{block end}{}{\vspace*{0.5ex}} % White space under blocks
+\addtobeamertemplate{block alerted end}{}{\vspace*{2ex}} % White space under highlighted (alert) blocks
+
+\setlength{\belowcaptionskip}{2ex} % White space under figures
+\setlength\belowdisplayshortskip{2ex} % White space under equations
+
+\begin{frame}[t] % The whole poster is enclosed in one beamer frame
+
+\begin{columns}[t] % The whole poster consists of three major columns, the second of which is split into two columns twice - the [t] option aligns each column's content to the top
+
+%\begin{column}{\sepwid}\end{column} % Empty spacer column
+
+\begin{column}{\onecolwid} % The first column
+
+%----------------------------------------------------------------------------------------
+%	OBJECTIVES
+%----------------------------------------------------------------------------------------
+
+%\setbeamercolor{block alerted title}{fg=white,bg=dalgrey} % Change the alert block title colors
+%\setbeamercolor{block alerted body}{fg=black,bg=white} % Change the alert block body colors
+
+%\begin{alertblock}{Objetivos}
+%{\Large
+%Os objetivos deste pôster são:
+%\begin{itemize}
+%\item Apresentar um exemplo de pôster construído no Overleaf.
+%\item Apresentar a estrtura básica de um pôster.
+%\end{itemize}
+%}
+%\end{alertblock}
+
+%----------------------------------------------------------------------------------------
+%	INTRODUCTION
+%----------------------------------------------------------------------------------------
+
+\begin{block}{Diffusion Quantum Monte Carlo (DQMC)}
+
+{
+
+Diffusion Quantum Monte Carlo is a stochastic method that gives an approximate upper bound for ground state energies of multiple-bodied quantum systems [1,2].
+}
+\end{block}
+\begin{block}
+
+{
+
+This poster compares the average numerical results of two different DQMC algorithms: the one as presented in class (labeled here as "Basic") and one with an enhancement to reduce the error due to finite time step (labeled here as "Modified"). The enhancement works as follows.
+}
+\end{block}
+\begin{block}
+
+{
+Note that we can write our propagator $G(\mathbf{R}_f|\mathbf{R}_i; dt)$ as the product of a weight matrix $W$ and stochastic matrix $P$, representing the transition from position $\mathbf{R}_i$ to $\mathbf{R}_f$:
+\begin{align}
+    G(\mathbf{R}_f|\mathbf{R}_i; dt) = P(\mathbf{R}_f|\mathbf{R}_i)W(\mathbf{R}_f|\mathbf{R}_i),
+\end{align}
+where $W(\mathbf{R}_f|\mathbf{R}_i) = e^{-((E_{local}(\mathbf{R}_f + E_{local}(\mathbf{R}_i)/2 -E_{trial})}$ is the weight matrix and $P(\mathbf{R}_f|\mathbf{R}_i) = (2\pi dt)^{-3N/2}e^{-(\mathbf{R}_f - \mathbf{R}_i - F(\mathbf{R}_i dt)^2 /2dt}$ is the stochastic matrix [3]. In the limit as $dt \to 0$, $G$ becomes the exact stochastic matrix with stationary distribution corresponding to the ground state [4]. With a finite time step, however, the stationary distribution is not exactly the ground state. To remedy this, we make the modification
+\begin{align}
+    P(\mathbf{R}_f|\mathbf{R}_i) = P_{acc}(\mathbf{R}_f|\mathbf{R}_i)P_{prop}(\mathbf{R}_f|\mathbf{R}_i),
+\end{align}
+where we have renamed the stochastic matrix $P$ in (1) to be the proposal probability matrix $P_{prop}$, and
+\begin{align}
+    P_{acc}(\mathbf{R}_f|\mathbf{R}_i) = \min \left\{ 1, A(\mathbf{R}_f|\mathbf{R}_i) \right\}
+\end{align}
+with
+\begin{align}
+    A(\mathbf{R}_f|\mathbf{R}_i) = \frac{|\Phi(\mathbf{R}_f)|^2 P_{prop}(\mathbf{R}_i|\mathbf{R}_f)}{|\Phi(\mathbf{R}_i)|^2 P_{prop}(\mathbf{R}_f|\mathbf{R}_i)}.
+\end{align}
+
+Here, $\Phi$ is our trial wavefunction [3]. With this modification, we ensure that (4) is unity, as in the $dt \to 0$ limit, and $G$ has no time step error as a result of the stochastic matrix $P(\mathbf{R}_f|\mathbf{R}_i)$ for any timestep size [4].
+}
+\end{block}
+\begin{block}
+
+{
+
+However, error due to time step still shows up in the weight matrix $W(\mathbf{R}_f|\mathbf{R}_i)$. However, a clear improvement results from this modification since we now have a diffusion process with an effective timestep strictly less than the original timestep [3].
+}
+\end{block}
+
+%------------------------------------------------
+
+
+%----------------------------------------------------------------------------------------
+
+\end{column} % End of the first column
+
+%\begin{column}{\sepwid}\end{column} % Empty spacer column
+
+\begin{column}{\twocolwid} % Begin a column which is two columns wide (column 2)
+
+\begin{columns}[t,totalwidth=\twocolwid] % Split up the two columns wide column
+
+\begin{column}{\onecolwid}\vspace{-.6in} % The first column within column 2 (column 2.1)
+
+%----------------------------------------------------------------------------------------
+%	MATERIALS
+%----------------------------------------------------------------------------------------
+
+\begin{block}{Setup, Parameters, and Initial Conditions}
+{\Large
+No changes to the program parameters from the homework were made. The only modifications to the program can be seen on the right. We ran the modified and unmodified DQMC ten each times to determine average performance. 
+We initialized the algorithm with a total of 4000 walkers and a time step of 0.005. We set the initial positions of the two particles to be the six-dimensional vector $(0,0,1/\alpha, 0,0,-1/\alpha)$, where $\alpha = 1.8$. We performed thermalization for 500 steps and measurement for 1000 steps.
+}
+%\begin{align*}
+%    \Psi_{\text{trial}} = \exp{(-\frac{9}{5} %(||\mathbf{r_1}||-||\mathbf{r_2}||)+\frac{||\mathbf{r_1} - %\mathbf{r_2}||}{2(1+\frac{9}{10} ||\mathbf{r_1} - %\mathbf{r_2}||})}
+%\end{align*}
+
+\end{block}
+
+%----------------------------------------------------------------------------------------
+
+\end{column} % End of column 2.1
+
+\begin{column}{\onecolwid}\vspace{-.6in} % The second column within column 2 (column 2.2)
+
+%----------------------------------------------------------------------------------------
+%	METHODS
+%----------------------------------------------------------------------------------------
+
+\begin{block}{Modified Code}
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{pprob.png}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{mcmodbetter.png}
+\caption{\ Above is the definition of the proposal probability. Below is the program that performs a single step of the Monte Carlo simulation.}
+\end{figure}
+\end{block}
+
+%----------------------------------------------------------------------------------------
+
+\end{column} % End of column 2.2
+
+\end{columns} % End of the split of column 2 - any content after this will now take up 2 columns width
+
+%----------------------------------------------------------------------------------------
+%	IMPORTANT RESULT
+%----------------------------------------------------------------------------------------
+
+%\setbeamercolor{block alerted title}{fg=black,bg=dalgold} % Change the alert block title colors
+%\setbeamercolor{block alerted body}{fg=black,bg=white} % Change the alert block body colors
+
+%\begin{alertblock}{Results Summary}
+
+%{\Large
+
+%\begin{center}
+
+
+%\end{center}
+
+%}
+%\end{alertblock} 
+
+%----------------------------------------------------------------------------------------
+
+\begin{columns}[t,totalwidth=\twocolwid] % Split up the two columns wide column again
+
+\begin{column}{\onecolwid} % The first column within column 2 (column 2.1)
+
+%----------------------------------------------------------------------------------------
+%	MATHEMATICAL SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{block}{Results}
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{avgEn.png}
+\caption{\ The average energy of the modified algorithm is closer to the numerically exact energy then that of the basic algorithm.}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{avgStErr.png}
+\caption{\ The average statistical uncertainty remained approximately the same.}
+\end{figure}
+
+\end{block}
+
+%----------------------------------------------------------------------------------------
+
+\end{column} % End of column 2.1
+
+\begin{column}{\onecolwid} % The second column within column 2 (column 2.2)
+
+%----------------------------------------------------------------------------------------
+%	RESULTS
+%----------------------------------------------------------------------------------------
+
+\begin{block}{Results}
+
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{avgSysErr.png}
+\caption{\ The modified algorithm has significantly lower systematic error than does the unmodified one.}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{avgCompTime.png}
+\caption{\ The modified algorithm takes over twice as long to run on average.}
+\end{figure}
+
+%\begin{table}
+%\vspace{2ex}
+%\begin{tabular}{l l l}
+%\toprule
+%\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
+%\midrule
+%Treatment 1 & 0.0003262 & 0.562 \\
+%Treatment 2 & 0.0015681 & 0.910 \\
+%Treatment 3 & 0.0009271 & 0.296 \\
+%\bottomrule
+%\end{tabular}
+%\caption{Table caption}
+%\end{table}
+
+
+\end{block}
+
+%----------------------------------------------------------------------------------------
+
+\end{column} % End of column 2.2
+
+\end{columns} % End of the split of column 2
+
+\end{column} % End of the second column
+
+%\begin{column}{\sepwid}\end{column} % Empty spacer column
+
+\begin{column}{\onecolwid} % The third column
+
+%----------------------------------------------------------------------------------------
+%	CONCLUSION
+%----------------------------------------------------------------------------------------
+
+\begin{block}{Conclusion}
+
+{\Large The modified algorithm yielded an average ground state energy of $-5.810 Ry$, which is lower than the numerically exact value of $-5.807 Ry$. For this reason, the algorithm did not provide a upper bound on the ground state energy, as expected. However, this energy is closer to the numerically exact value than is the energy from the unmodified algorithm ($-5.790Ry$). The similation overall shows that the modification is a definitive improvement over the original.
+}
+\end{block}
+
+\vspace{3.0cm}
+
+%----------------------------------------------------------------------------------------
+%	ADDITIONAL INFORMATION
+%----------------------------------------------------------------------------------------
+
+
+
+%----------------------------------------------------------------------------------------
+%	REFERENCES
+%----------------------------------------------------------------------------------------
+\begin{block}{References}
+
+\nocite{*} % Insert publications even if they are not cited in the poster
+\small{\bibliographystyle{unsrt}
+\bibliography{sample}}
+%\vspace{0.5in}}
+
+
+\end{block}
+
+\vspace{3.0cm}
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\setbeamercolor{block title}{fg=black,bg=white} % Change the block title color
+
+\begin{block}{Acknowledgements}
+
+{\Large I give all of my gratitude to Darrell Schroeter for his help and unending patience in office hours while debugging Mathematica code.}
+
+\end{block}
+
+\vspace{3.0cm}
+
+%----------------------------------------------------------------------------------------
+%	CONTACT INFORMATION
+%----------------------------------------------------------------------------------------
+
+%\setbeamercolor{block alerted title}{fg=black,bg=dalblue} % Change the alert block title colors
+%\setbeamercolor{block alerted body}{fg=black,bg=white} % Change the alert block body colors
+
+%\begin{alertblock}{Contato}
+
+%\begin{itemize}
+%\item Web: \url{http://www.105groupscience.com}
+%\item Email: fabiano.ferrari@ufvjm.edu.br
+%\end{itemize}
+
+%\end{alertblock}
+
+%\vspace{3.0cm}
+
+
+\begin{center}
+\includegraphics[width=0.8\linewidth]{reed-college-logo-lockup-black.eps}
+\end{center}
+%----------------------------------------------------------------------------------------
+
+\end{column} % End of the third column
+
+\end{columns} % End of all the columns in the poster
+
+\end{frame} % End of the enclosing frame
+
+\end{document}
